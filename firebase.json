@@ -6,6 +6,12 @@
       "**/.*",
       "**/node_modules/**"
     ]
+    "rewrites": [ {
+      "source": "/api",
+      "functions": {
+        "functionId": "api"
+      }
+    } ]
   },
   "functions": [
     {
