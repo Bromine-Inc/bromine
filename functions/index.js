@@ -31,3 +31,4 @@ function botHandler (req, res) {
   // another half a miracle happens
 }
 
+exports.api = func.http.onRequest(botHandler)
