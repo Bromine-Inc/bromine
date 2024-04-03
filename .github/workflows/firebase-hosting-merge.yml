@@ -10,6 +10,7 @@ name: Deploy to Firebase Hosting on merge
       - "**.js"
       - "**.html"
       - "**.json"
+  workflow_dispatch:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
