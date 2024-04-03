@@ -1,7 +1,7 @@
-/* const mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
+const mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
 const mcprotocol = require("minecraft-protocol") // We need the class from here
 const classt = require("class-transformer") // We need to retrieve stuff from the database and convert it to a class
-const func = require("firebase-functions") // functions! */
+const func = require("firebase-functions") // functions!
 /* const http = require("http"); // We need a server to accept requests
 const fApp = require("firebase/app"); // Get the firebase app
 const fAnl = require("firebase/analytics"); // Idk why we need analytics
