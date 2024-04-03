@@ -27,8 +27,9 @@ function actionDecider (action, user, data) {
 
 function botHandler (req, res) {
   //var [action,user,data] = req.url.slice(1).split('/', 3) // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://b-romine.web.app//[ACTION]/[USER]/[DATA] // Site not up yet  
-  res.status(200/*, {'Content-Type': 'application/json'}*/).write(`<h1>Hello!</h1><p>${JSON.stringify(req)}</p>`); // Will be implemented later
+  res.status(200).write(`<h1>Hello!</h1><p>${JSON.stringify(req)}</p>`); // Will be implemented later
   // another half a miracle happens
 }
 
 exports.api = func.http.onRequest(botHandler)
+/*, {'Content-Type': 'application/json'}*/
