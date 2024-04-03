@@ -1,8 +1,8 @@
-const mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
+/* const mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
 const mcprotocol = require("minecraft-protocol") // We need the class from here
 const classt = require("class-transformer") // We need to retrieve stuff from the database and convert it to a class
-const func = require("firebase-functions") // functions!
-/*const http = require("http"); // We need a server to accept requests
+const func = require("firebase-functions") // functions! */
+/* const http = require("http"); // We need a server to accept requests
 const fApp = require("firebase/app"); // Get the firebase app
 const fAnl = require("firebase/analytics"); // Idk why we need analytics
 const firebaseConfig = { // Config stuff
@@ -15,7 +15,7 @@ const firebaseConfig = { // Config stuff
   measurementId: "G-JP0HTVJ203"
 };
 const app = fApp.initializeApp(firebaseConfig); // Initialize!
-const analytics = fAnl.getAnalytics(app); // OMG IDK WHY I NEED THIS!!!*/
+const analytics = fAnl.getAnalytics(app); // OMG IDK WHY I NEED THIS!!! */
 
 function databasePush () {
 // a miracle happens

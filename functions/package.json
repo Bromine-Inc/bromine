@@ -15,7 +15,10 @@
   "main": "index.js",
   "dependencies": {
     "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.3.1"
+    "firebase-functions": "^4.3.1",
+    "mineflayer": "^4.20.0",
+    "minecraft-protocol": "^1.47.0",
+    "class-transformer": "^0.5.1"
   },
   "devDependencies": {
     "eslint": "^8.15.0",
