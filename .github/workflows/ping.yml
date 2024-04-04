@@ -6,4 +6,4 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - run: "curl https://bromine-mw3o.onrender.com/a/b/c"
+      - run: "curl https://bromine-mw3o.onrender.com/wakeup/na/na"
