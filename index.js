@@ -2,20 +2,7 @@ var mineflayer = require("mineflayer"); // Put a decent chunk of the workload on
 var mcprotocol = require("minecraft-protocol"); // We need the class from here
 var classt = require("class-transformer"); // We need to retrieve stuff from the database and convert it to a class
 var func = require("firebase-functions"); // functions!
-/* const http = require("http"); // We need a server to accept requests
-const fApp = require("firebase/app"); // Get the firebase app
-const fAnl = require("firebase/analytics"); // Idk why we need analytics
-const firebaseConfig = { // Config stuff
-  apiKey: "AIzaSyDFFiw65z47zWeICeC3eRZhkcbE_pLU9BA", // For some reason it's ok to share the api key publicly
-  authDomain: "b-romine.firebaseapp.com",
-  projectId: "b-romine",
-  storageBucket: "b-romine.appspot.com",
-  messagingSenderId: "663671114255",
-  appId: "1:663671114255:web:5dfbb8470b5a8ebc60b17a",
-  measurementId: "G-JP0HTVJ203"
-};
-const app = fApp.initializeApp(firebaseConfig); // Initialize!
-const analytics = fAnl.getAnalytics(app); // OMG IDK WHY I NEED THIS!!! */
+const http = require("http"); // We need a server to accept requests
 
 function databasePush() {
 // a miracle happens
