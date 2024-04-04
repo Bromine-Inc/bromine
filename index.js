@@ -1,7 +1,7 @@
-const mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
-const mcprotocol = require("minecraft-protocol"); // We need the class from here
-const classt = require("class-transformer"); // We need to retrieve stuff from the database and convert it to a class
-const func = require("firebase-functions"); // functions!
+var mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
+var mcprotocol = require("minecraft-protocol"); // We need the class from here
+var classt = require("class-transformer"); // We need to retrieve stuff from the database and convert it to a class
+var func = require("firebase-functions"); // functions!
 /* const http = require("http"); // We need a server to accept requests
 const fApp = require("firebase/app"); // Get the firebase app
 const fAnl = require("firebase/analytics"); // Idk why we need analytics
@@ -26,10 +26,12 @@ function actionDecider(action, user, data) {
 }
 
 function botHandler(req, res) {
-  //var [action,user,data] = req.url.slice(1).split('/', 3) // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://b-romine.web.app//[ACTION]/[USER]/[DATA] // Site not up yet  
-  res.status(200).write(`<h1>Hello!</h1><p>${JSON.stringify(req)}</p>`); // Will be implemented later
+  var [action,user,data] = req.url.slice(1).split('/', 3) // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://b-romine.web.app//[ACTION]/[USER]/[DATA] // Site not up yet 
+  console.log({'action': action, 'user': user, 'data': data})
+  res.write(`<h1>Hello!</h1><p>${`${action}/${user}/${data}`}</p>`); // Will be implemented later
   // another half a miracle happens
 }
 
-exports.api = func.http.onRequest(botHandler);
+//exports.api = func.http.onRequest(botHandler);
 /*, {'Content-Type': 'application/json'}*/
+http.createServer(botHandler).listen(process.env.PORT || 3000);
