@@ -15,6 +15,7 @@ function actionDecider(action, user, data) {
 function botHandler(req, res) {
   var [action,user,data] = req.url.slice(1).split('/', 3) // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://b-romine.web.app//[ACTION]/[USER]/[DATA] // Site not up yet 
   console.log({'action': action, 'user': user, 'data': data})
+  res.writeHead(200, {'Content-Type': 'text/html'});
   res.write(`<h1>Hello!</h1><p>${`${action}/${user}/${data}`}</p>`); // Will be implemented later
   // another half a miracle happens
 }
