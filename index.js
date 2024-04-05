@@ -27,7 +27,7 @@ function databasePush() {
 function actionDecider(action, user, data) {
   console.log({'action': action, 'user': user, 'data': data});
   let status = 200
-  let response = `<h1>Hello!</h1><p>${`${action}/${user}/${data}`}</p>`
+  let response = `<h1>Hello!</h1><p>${action}/${user}/${data}</p>`
   return [status, response]
 }
 
