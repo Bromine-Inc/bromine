@@ -24,7 +24,7 @@ function databasePush() {
 // a miracle happens
 }
 
-function actionDecider(action, user, data) {
+function actionDecider(action, user, data, req, res) {
   console.log({'action': action, 'user': user, 'data': data});
   res.writeHead(200, {'Content-Type': 'text/html'});
   res.write(`<h1>Hello!</h1><p>${`${action}/${user}/${data}`}</p>`); // Will be implemented later
@@ -33,7 +33,7 @@ function actionDecider(action, user, data) {
 
 function botHandler(req, res) {
   var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
-  actionDecider(action, user, data)
+  actionDecider(action, user, data, req, res)
   // another half a miracle happens
 }
 
