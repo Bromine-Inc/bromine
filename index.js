@@ -44,7 +44,7 @@ function botHandler(req, res) {
   var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
   var [s, r, c] = actionDecider(action, user, data);
   res.writeHead(s, {'Content-Type': c});
-  res.write(r);
+  res.write(JSON.stringify(r));
   res.end();
   // another half a miracle happens
 }
