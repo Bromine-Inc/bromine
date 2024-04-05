@@ -1,9 +1,0 @@
-name: Ping app
-on:
-  schedule:
-    - cron: 0,5,10,15,20,25,30,35,40,45,50,55 * * * *
-jobs:
-  ping:
-    runs-on: ubuntu-latest
-    steps:
-      - run: "curl https://bromine-mw3o.onrender.com/wakeup/na/na"
