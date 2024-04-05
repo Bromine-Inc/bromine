@@ -18,7 +18,7 @@ var firebaseConfig = { // Config stuff
 };
 var app = fApp.initializeApp(firebaseConfig); // Initialize!
 var analytics = fAnl.getAnalytics(app); // OMG IDK WHY I NEED THIS!!!
-const database = fDat.getDatabase(app); // It's time for some data!
+var database = fDat.getDatabase(app); // It's time for some data!
 
 function databasePush() {
 // a miracle happens
@@ -26,13 +26,14 @@ function databasePush() {
 
 function actionDecider(action, user, data, req, res) {
   console.log({'action': action, 'user': user, 'data': data});
+  let res = res;
   res.writeHead(200, {'Content-Type': 'text/html'});
   res.write(`<h1>Hello!</h1><p>${`${action}/${user}/${data}`}</p>`); // Will be implemented later
   res.end(); // It will think the request timed out if we don't do this!
 }
 
 function botHandler(req, res) {
-  var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
+  let [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
   actionDecider(action, user, data, req, res)
   // another half a miracle happens
 }
