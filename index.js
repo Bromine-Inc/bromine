@@ -24,17 +24,19 @@ function databasePush() {
 // a miracle happens
 }
 
-function actionDecider(action, user, data, req, res) {
+function actionDecider(action, user, data) {
   console.log({'action': action, 'user': user, 'data': data});
-  let res = res;
-  res.writeHead(200, {'Content-Type': 'text/html'});
-  res.write(`<h1>Hello!</h1><p>${`${action}/${user}/${data}`}</p>`); // Will be implemented later
-  res.end(); // It will think the request timed out if we don't do this!
+  let status = 200
+  let response = `<h1>Hello!</h1><p>${`${action}/${user}/${data}`}</p>`
+  return [status, response]
 }
 
 function botHandler(req, res) {
   let [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
-  actionDecider(action, user, data, req, res)
+  let [s, r] = actionDecider(action, user, data);
+  res.writeHead(s, {'Content-Type': 'text/html'});
+  res.write(r);
+  res.end();
   // another half a miracle happens
 }
 
