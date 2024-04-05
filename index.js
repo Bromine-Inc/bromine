@@ -31,12 +31,12 @@ function actionDecider(action, user, data) {
   var response = {}
   switch (action) {     
     case "wakeup":
-      response = {"message": "I'M SOOOOOOOOOOO TIRED"}
+      var response = {"message": "I'M SOOOOOOOOOOO TIRED"}
     case "":
-      response = "<h1>Hello!</h1>"
-      ctype = 'text/html'
+      var response = "<h1>Hello!</h1>"
+      var ctype = 'text/html'
     default:
-      response = {}
+      break
   }
   return [status, response, ctype]
 }
