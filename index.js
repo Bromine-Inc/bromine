@@ -32,9 +32,11 @@ function actionDecider(action, user, data) {
   switch (action) {     
     case "wakeup":
       var response = {"message": "I'M SOOOOOOOOOOO TIRED"}
+      break
     case "":
       var response = "<h1>Hello!</h1>"
       var ctype = 'text/html'
+      break
     default:
       break
   }
