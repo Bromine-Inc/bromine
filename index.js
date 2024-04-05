@@ -26,23 +26,23 @@ function databasePush() {
 
 function actionDecider(action, user, data) {
   console.log({'action': action, 'user': user, 'data': data});
-  let status = 200
-  let ctype = 'application/json'
-  switch (action) {
+  var status = 200
+  var ctype = 'application/json'
+  switch (action) {     
     case "wakeup":
-      let response = {"message": "I'M SOOOOOOOOOOO TIRED"}
+      var response = {"message": "I'M SOOOOOOOOOOO TIRED"}
     case "":
-      let response = "<h1>Hello!</h1>"
-      let ctype = 'text/html'
+      var response = "<h1>Hello!</h1>"
+      var ctype = 'text/html'
     default:
-      let response = {}
+      var response = {}
   }
   return [status, response, ctype]
 }
 
 function botHandler(req, res) {
-  let [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
-  let [s, r, c] = actionDecider(action, user, data);
+  var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
+  var [s, r, c] = actionDecider(action, user, data);
   res.writeHead(s, {'Content-Type': c});
   res.write(r);
   res.end();
