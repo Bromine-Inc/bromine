@@ -28,14 +28,15 @@ function actionDecider(action, user, data) {
   console.log({'action': action, 'user': user, 'data': data});
   var status = 200
   var ctype = 'application/json'
+  var response = {}
   switch (action) {     
     case "wakeup":
-      var response = {"message": "I'M SOOOOOOOOOOO TIRED"}
+      response = {"message": "I'M SOOOOOOOOOOO TIRED"}
     case "":
-      var response = "<h1>Hello!</h1>"
-      var ctype = 'text/html'
+      response = "<h1>Hello!</h1>"
+      ctype = 'text/html'
     default:
-      var response = {}
+      response = {}
   }
   return [status, response, ctype]
 }
