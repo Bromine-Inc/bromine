@@ -1,5 +1,6 @@
 var mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
 var mcprotocol = require("minecraft-protocol"); // We need the class from here
+var events = require("events")
 var classt = require("class-transformer"); // We need to retrieve stuff from the database and convert it to a class
 var func = require("firebase-functions"); // functions!
 var http = require("http"); // We need a server to accept requests
@@ -19,9 +20,21 @@ var firebaseConfig = { // Config stuff
 var app = fApp.initializeApp(firebaseConfig); // Initialize!
 //var analytics = fAnl.getAnalytics(app); // OMG IDK WHY I NEED THIS!!!
 var database = fDat.getDatabase(app); // It's time for some data!
+var fdref = fDat.ref(database);
+var [child, get] = [fDat.child, fDat.get]
+var [PtoC, ser] = [classt.plainToClass, classt.serialize]
 
-function databasePush() {
-// a miracle happens
+function readParse(id) {
+  function parse(data) { // Sheesh
+    let a = data
+    a._client.splitter.buffer = PtoC(Buffer, a._client.splitter.buffer)
+    a._client.splitter = PtoC(mcprotocol.framing.Splitter, a._client.splitter)
+    a._client.framer = PtoC(mcprotocol.framing.Framer, a._client.framer)
+    a._client = PtoC(mcprotocol.Client, a._client)
+    a = PtoC(events.EventEmitter, a) // Did you know the object returned by mineflayer.createBot() is just an EventEmitter?
+    return a
+  }
+  return get(child(fdref, id)).then(parse)
 }
 
 function actionDecider(action, user, data) {
@@ -46,8 +59,9 @@ function actionDecider(action, user, data) {
 function botHandler(req, res) {
   var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
   var [s, r, c] = actionDecider(action, user, data);
+  var t = (c === 'application/json' ? JSON.stringify(r) : r)
   res.writeHead(s, {'Content-Type': c});
-  res.write(JSON.stringify(r));
+  res.write(t);
   res.end();
   // another half a miracle happens
 }
