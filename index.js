@@ -1,12 +1,12 @@
 var mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
 var mcprotocol = require("minecraft-protocol"); // We need the class from here
-var events = require("events")
+var events = require("events");
 var classt = require("class-transformer"); // We need to retrieve stuff from the database and convert it to a class
-var func = require("firebase-functions"); // functions!
 var http = require("http"); // We need a server to accept requests
 var fApp = require("firebase/app"); // Get the firebase app
-// var fAnl = require("firebase/analytics"); // Idk why we need analytics
 var fDat = require("firebase/database");
+var fs = require("fs"); // We get the contents for index.html
+
 var firebaseConfig = { // Config stuff
   apiKey: "AIzaSyDFFiw65z47zWeICeC3eRZhkcbE_pLU9BA", // For some reason it's ok to share the api key publicly
   authDomain: "b-romine.firebaseapp.com",
@@ -17,12 +17,16 @@ var firebaseConfig = { // Config stuff
   measurementId: "G-JP0HTVJ203",
   databaseURL: "https://b-romine-default-rtdb.europe-west1.firebasedatabase.app/",
 };
+
 var app = fApp.initializeApp(firebaseConfig); // Initialize!
-//var analytics = fAnl.getAnalytics(app); // OMG IDK WHY I NEED THIS!!!
 var database = fDat.getDatabase(app); // It's time for some data!
 var fdref = fDat.ref(database);
-var [child, get] = [fDat.child, fDat.get]
-var [PtoC, ser] = [classt.plainToClass, classt.serialize]
+var [child, get] = [fDat.child, fDat.get];
+
+var [PtoC, ser] = [classt.plainToInstance, ((o) => {JSON.stringify(instanceToPlain(o))})];
+
+var html;
+fs.readFile('./index.html', ((err, data) => {html = data.toString(); if (err) {throw err};}))
 
 function readParse(id) {
   function parse(data) { // Sheesh
@@ -46,11 +50,9 @@ function actionDecider(action, user, data) {
     case "wakeup":
       var response = {"message": "I'M SOOOOOOOOOOO TIRED"}
       break
-    case "":
-      var response = "<h1>Hello!</h1>"
-      var ctype = 'text/html'
-      break
     default:
+      var response = html
+      var ctype = 'text/html'
       break
   }
   return [status, response, ctype]
@@ -59,13 +61,12 @@ function actionDecider(action, user, data) {
 function botHandler(req, res) {
   var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
   var [s, r, c] = actionDecider(action, user, data);
-  var t = (c === 'application/json' ? JSON.stringify(r) : r)
+  var t = (c === 'application/json' ? JSON.stringify(r) : r);
   res.writeHead(s, {'Content-Type': c});
   res.write(t);
   res.end();
   // another half a miracle happens
 }
 
-//exports.api = func.http.onRequest(botHandler);
-/*, {'Content-Type': 'application/json'}*/
+
 http.createServer(botHandler).listen(process.env.PORT || 3000);
