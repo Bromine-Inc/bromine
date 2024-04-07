@@ -53,7 +53,7 @@ function actionDecider(action, user, data) {
       var response = {"message": "I'M SOOOOOOOOOOO TIRED"};
       break;
     case "favicon.ico":
-      var ctype = 'image/jpeg';
+      var ctype = 'image/x-icon';
       var response = img;
       break;
     default:
