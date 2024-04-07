@@ -40,7 +40,7 @@ function readParse(id) {
     a = PtoC(events.EventEmitter, a); // Did you know the object returned by mineflayer.createBot() is just an EventEmitter?
     return a;
   }
-  return get(child(fdref, id)).then(parse);
+  return get(child(fdref, `users/{id}`)).then(parse);
 }
 
 function actionDecider(action, user, data) {
