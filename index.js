@@ -23,7 +23,7 @@ var database = fDat.getDatabase(app); // It's time for some data!
 var fdref = fDat.ref(database);
 var [child, get] = [fDat.child, fDat.get];
 
-var [PtoC, ser] = [classt.plainToInstance, ((o) => {JSON.stringify(instanceToPlain(o))})];
+var [PtoC, CtoP] = [classt.plainToInstance, classt.instanceToPlain];
 
 var html;
 var img;
@@ -32,7 +32,7 @@ fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if 
 
 function readParse(id) {
   function parse(data) { // Sheesh
-    let a = data
+    let a = data.val()
     a._client.splitter.buffer = PtoC(Buffer, a._client.splitter.buffer);
     a._client.splitter = PtoC(mcprotocol.framing.Splitter, a._client.splitter);
     a._client.framer = PtoC(mcprotocol.framing.Framer, a._client.framer);
