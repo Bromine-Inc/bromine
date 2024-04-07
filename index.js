@@ -28,7 +28,7 @@ var [PtoC, ser] = [classt.plainToInstance, ((o) => {JSON.stringify(instanceToPla
 var html;
 var img;
 fs.readFile('./index.html', ((err, data) => {html = data.toString(); if (err) {throw err};}));
-fs.readFile('./favicon.ico', ((err, data) => {img = data.toString(); if (err) {throw err};}));
+fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if (err) {throw err};}));
 
 function readParse(id) {
   function parse(data) { // Sheesh
