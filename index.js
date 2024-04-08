@@ -1,47 +1,14 @@
 var mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
-var mcprotocol = require("minecraft-protocol"); // We need the class from here
-var events = require("events");
-var classt = require("class-transformer"); // We need to retrieve stuff from the database and convert it to a class
 var http = require("http"); // We need a server to accept requests
-var fApp = require("firebase/app"); // Get the firebase app
-var fDat = require("firebase/database");
-var fs = require("fs"); // We get the contents for index.html
-
-var firebaseConfig = { // Config stuff
-  apiKey: "AIzaSyDFFiw65z47zWeICeC3eRZhkcbE_pLU9BA", // For some reason it's ok to share the api key publicly
-  authDomain: "b-romine.firebaseapp.com",
-  projectId: "b-romine",
-  storageBucket: "b-romine.appspot.com",
-  messagingSenderId: "663671114255",
-  appId: "1:663671114255:web:5dfbb8470b5a8ebc60b17a",
-  measurementId: "G-JP0HTVJ203",
-  databaseURL: "https://b-romine-default-rtdb.europe-west1.firebasedatabase.app/",
-};
-
-var app = fApp.initializeApp(firebaseConfig); // Initialize!
-var database = fDat.getDatabase(app); // It's time for some data!
-var fdref = fDat.ref(database);
-var [child, get] = [fDat.child, fDat.get];
-
-var [PtoC, CtoP] = [classt.plainToInstance, classt.instanceToPlain];
+var fs = require("fs"); // We get the contents for index.html and favicon.ico
+var crypto = require("crypto");
 
 var html;
 var img;
 fs.readFile('./index.html', ((err, data) => {html = data.toString(); if (err) {throw err};}));
 fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if (err) {throw err};}));
 
-function readParse(id) {
-  function parse(data) { // Sheesh
-    let a = data.val()
-    a._client.splitter.buffer = PtoC(Buffer, a._client.splitter.buffer);
-    a._client.splitter = PtoC(mcprotocol.framing.Splitter, a._client.splitter);
-    a._client.framer = PtoC(mcprotocol.framing.Framer, a._client.framer);
-    a._client = PtoC(mcprotocol.Client, a._client);
-    a = PtoC(events.EventEmitter, a); // Did you know the object returned by mineflayer.createBot() is just an EventEmitter?
-    return a;
-  }
-  return get(child(fdref, `users/{id}`)).then(parse);
-}
+var bots = {}; // There might be some scaling issues
 
 function actionDecider(action, user, data) {
   console.log({'action': action, 'user': user, 'data': data});
@@ -50,12 +17,32 @@ function actionDecider(action, user, data) {
   var response = {}
   switch (action) {     
     case "wakeup":
-      var response = {"message": "I'M SOOOOOOOOOOO TIRED"};
+      var response = {success: true, message: "I'M SOOOOOOOOOOO TIRED"};
       break;
     case "favicon.ico":
       var ctype = 'image/x-icon';
       var response = img;
       break;
+    case "create":
+      let [username, ip, port] = data.split(","); // For now, we only support offline mode.
+      let id = crypto.randomBytes(32).toString('base64');
+      let bot = mineflayer.createBot({username: username || "Bromine_${id.slice(0, 8)}", host: ip, port: (port || 25565)});
+      bots[id] = bot;
+      var response = {success: true, message: id};
+      break;
+    case "move":
+      let [packet, use] = data.split(",");
+      bots[user].setControlState(packet, use);
+      var response = {success: true, data: {position: bots[user].entity.position} }
+      break;
+    case "look":
+      let [yaw, pitch] = data.split(",");
+      bots[user].look(yaw, pitch)
+      var response = {success: true, data: {yaw: bots[user].entity.yaw, pitch: bots[user].entity.pitch}}
+    case "quit":
+      bots[user].end("Bromine client requested disconnect")
+      delete bots[user]
+      var response = {success: true}
     default:
       var response = html;
       var ctype = 'text/html';
