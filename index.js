@@ -15,6 +15,7 @@ function actionDecider(action, user, data) {
   var status = 200;
   var ctype = 'application/json';
   var response = {}
+  try {
   switch (action) {     
     case "wakeup":
       var response = {success: true, message: "I'M SOOOOOOOOOOO TIRED"};
@@ -60,12 +61,15 @@ function actionDecider(action, user, data) {
       response.data.world = b.world;
       response.data.players = b.players;
       response.data.player = b.player;
-      response.data.entities = b.entities
+      response.data.entities = b.entities;
       break; 
     default:
       var response = html;
       var ctype = 'text/html';
       break;
+  } catch {
+    var response = {success: false};
+    var status = 400;
   }
   return [status, response, ctype];
 }
