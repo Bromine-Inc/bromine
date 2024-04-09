@@ -25,7 +25,7 @@ function actionDecider(action, user, data) {
       break;
     case "create":
       let [username, ip, port] = data.split(","); // For now, we only support offline mode.
-      let id = crypto.randomBytes(32).toString('base64');
+      let id = crypto.randomBytes(32).toString('hex');
       let bot = mineflayer.createBot({username: username || "Bromine_${id.slice(0, 8)}", host: ip, port: (port || 25565)});
       bot.messages = [];
       bot.on("message", function(msg, pos) {this.chatMessages.push({jsonMsg: msg, position: pos})});
