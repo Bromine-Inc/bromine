@@ -27,8 +27,8 @@ function actionDecider(action, user, data) {
       let [username, ip, port] = data.split(","); // For now, we only support offline mode.
       let id = crypto.randomBytes(32).toString('base64');
       let bot = mineflayer.createBot({username: username || "Bromine_${id.slice(0, 8)}", host: ip, port: (port || 25565)});
-      bots[id] = bot;
-      var response = {success: true, message: id};
+      bots[id] = {bot: bot, messages: []};
+      var response = {success: true, id: id};
       break;
     case "move":
       let [packet, use] = data.split(",");
@@ -39,10 +39,18 @@ function actionDecider(action, user, data) {
       let [yaw, pitch] = data.split(",");
       bots[user].look(yaw, pitch)
       var response = {success: true, data: {yaw: bots[user].entity.yaw, pitch: bots[user].entity.pitch}}
+      break;
     case "quit":
       bots[user].end("Bromine client requested disconnect")
       delete bots[user]
       var response = {success: true}
+      break;
+    case "chatsend":
+      let message = data
+      bots[user].chat(message)
+      break;
+    case "getdata":
+      break; // will implement later
     default:
       var response = html;
       var ctype = 'text/html';
