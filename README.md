@@ -7,6 +7,4 @@ This is going to be a Roblox game. The Roblox game will make requests to the nod
 ## Credits
 * render.com for hosting this for free
 * cron-job.org for keeping the render app awake
-* firebase.google.com for providing a free database
 * PrismarineJS since I'm using their modules to access Minecraft
-* Typestack since I'm using their module to turn regular json into a JS class
