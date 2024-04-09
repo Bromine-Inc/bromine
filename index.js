@@ -67,6 +67,7 @@ function actionDecider(action, user, data) {
       var response = html;
       var ctype = 'text/html';
       break;
+  } 
   } catch {
     var response = {success: false};
     var status = 400;
