@@ -35,6 +35,7 @@ function actionDecider(action, user, data) {
       break;
     case "move":
       let [packet, use] = data.split(",");
+      use = JSON.parse(use)
       bots[user].setControlState(packet, use);
       var response = {success: true, data: {position: bots[user].entity.position} };
       break;
@@ -51,6 +52,7 @@ function actionDecider(action, user, data) {
     case "chatsend":
       let message = data;
       bots[user].chat(message);
+      var response = {success: true, message: message}
       break;
     case "getdata":
       let b = bots[user];
