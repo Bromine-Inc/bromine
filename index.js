@@ -28,7 +28,7 @@ function actionDecider(action, user, data) {
       let id = crypto.randomBytes(32).toString('hex');
       let bot = mineflayer.createBot({username: username || `Bromine_${id.slice(0, 8)}`, host: ip, port: (port || 25565)});
       bot.messages = [];
-      bot.on("message", function(msg, pos) {this.chatMessages.push({jsonMsg: msg, position: pos})});
+      bot.on("message", function(msg, pos) {this.messages.push({jsonMsg: msg, position: pos})});
       bots[id] = {bot: bot};
       var response = {success: true, id: id};
       break;
