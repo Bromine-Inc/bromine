@@ -24,7 +24,6 @@ function actionDecider(action, user, data) {
       var response = img;
       break;
     case "create":
-      try {
       let [username, ip, port] = data.split(","); // For now, we only support offline mode.
       let id = crypto.randomBytes(32).toString('hex');
       let bot = mineflayer.createBot({username: username || `Bromine_${id.slice(0, 8)}`, host: ip, port: (port || 25565)});
@@ -33,9 +32,6 @@ function actionDecider(action, user, data) {
       bots[id] = {bot: bot};
       var response = {success: true, id: id};
       break;
-      } catch(err) {
-        console.log(err)
-      }
     case "move":
       let [packet, use] = data.split(",");
       bots[user].setControlState(packet, use);
