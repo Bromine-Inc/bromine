@@ -30,7 +30,7 @@ function actionDecider(action, user, data) {
       let bot = mineflayer.createBot({username: username || `Bromine_${id.slice(0, 8)}`, host: ip, port: (port || 25565)});
       bot.messages = [];
       bot.on("message", function(msg, pos) {this.messages.push({jsonMsg: msg, position: pos})});
-      bots[id] = {bot: bot};
+      bots[id] = bot;
       var response = {success: true, id: id};
       break;
     case "move":
@@ -68,9 +68,10 @@ function actionDecider(action, user, data) {
       var ctype = 'text/html';
       break;
   } 
-  } catch {
+  } catch(err) {
     var response = {success: false};
     var status = 400;
+    console.error(err);
   }
   return [status, response, ctype];
 }
