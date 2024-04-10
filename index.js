@@ -32,8 +32,8 @@ function actionDecider(action, user, data) {
       bot.messages = [];
       bot.online = true
       bot.on("message", function(msg, pos) {this.messages.push({jsonMsg: msg, position: pos})});
-      bot.on("kick", function(...a) {this = null});
-      bot.on("end", function(...a) {this = null});
+      bot.on("kick", function(...a) {this = undefined});
+      bot.on("end", function(...a) {this = undefined});
       bots[id] = bot;
       var response = {success: true, id: id};
       break;
