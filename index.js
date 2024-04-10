@@ -65,7 +65,6 @@ function actionDecider(action, user, data) {
       var response = {success: true, data: {}};
       response.data.messages = b.messages;
       if (clear) {bots[user].messages = []};
-      response.data.online = b.online
       //response.data.world = b.world.getColumns();
       //response.data.players = b.players;
       //response.data.player = b.player;
