@@ -11,7 +11,7 @@ fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if 
 var bots = {}; // There might be some scaling issues
 
 function actionDecider(action, user, data) {
-  let data = decodeURIComponent(data)
+  data = decodeURIComponent(data)
   console.log({'action': action, 'user': user, 'data': data});
   var status = 200;
   var ctype = 'application/json';
