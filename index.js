@@ -60,10 +60,10 @@ function actionDecider(action, user, data) {
       var response = {success: true, data: {}};
       response.data.messages = b.messages;
       if (clear) {bots[user].messages = []};
-      response.data.world = b.world;
-      response.data.players = b.players;
-      response.data.player = b.player;
-      response.data.entities = b.entities;
+      response.data.world = b.world.getColumns();
+      //response.data.players = b.players;
+      //response.data.player = b.player;
+      //response.data.entities = b.entities;
       break; 
     default:
       var response = html;
