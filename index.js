@@ -30,10 +30,9 @@ function actionDecider(action, user, data) {
       let id = crypto.randomBytes(32).toString('hex');
       let bot = mineflayer.createBot({username: username || `Bromine_${id.slice(0, 8)}`, host: ip, port: (port || 25565)});
       bot.messages = [];
-      bot.online = true
+      bot.id = id
       bot.on("message", function(msg, pos) {this.messages.push({jsonMsg: msg, position: pos})});
-      bot.on("kick", function(...a) {this = undefined});
-      bot.on("end", function(...a) {this = undefined});
+      bot.on("kick", function() {actionDecider("quit", this.id, "true")});
       bots[id] = bot;
       var response = {success: true, id: id};
       break;
@@ -49,7 +48,9 @@ function actionDecider(action, user, data) {
       var response = {success: true, data: {yaw: bots[user].entity.yaw, pitch: bots[user].entity.pitch}};
       break;
     case "quit":
-      bots[user].end("Bromine client requested disconnect");
+      [reason, kicked] = data.split(",")
+      kicked = JSON.parse(kicked)
+      if (kicked) {bots[user].end(reason)};
       delete bots[user];
       var response = {success: true};
       break;
