@@ -74,6 +74,8 @@ function actionDecider(action, user, data) {
       response.data.messages = b.messages;
       if (clear) {bots[user].messages = []};
       response.data.online = b.online
+      response.data.position = b.entity.position
+      response.data.chunk = bot.world.getColumn(b.entity.position.x >> 4, b.entity.position.z >> 4)
       //response.data.world = b.world.getColumns();
       //response.data.players = b.players;
       //response.data.player = b.player;
