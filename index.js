@@ -10,12 +10,18 @@ fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if 
 
 var bots = {}; // There might be some scaling issues
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 function actionDecider(action, user, data) {
   data = decodeURIComponent(data)
   console.log({'action': action, 'user': user, 'data': data});
   var status = 200;
   var ctype = 'application/json';
-  var response = {}
+  var response = {};
   try {
   switch (action) {     
     case "wakeup":
@@ -30,9 +36,11 @@ function actionDecider(action, user, data) {
       let id = crypto.randomBytes(32).toString('hex');
       let bot = mineflayer.createBot({username: username || `Bromine_${id.slice(0, 8)}`, host: ip, port: (port || 25565)});
       bot.messages = [];
-      bot.id = id
+      bot.id = id;
+      bot.online = false;
       bot.on("message", function(msg, pos) {this.messages.push({jsonMsg: msg, position: pos})});
-      bot.on("kick", function() {actionDecider("quit", this.id, "true")});
+      bot.on("kick", function() {this.online = false});
+      bot.once("spawn", function(){this.online = true});
       bots[id] = bot;
       var response = {success: true, id: id};
       break;
@@ -65,6 +73,7 @@ function actionDecider(action, user, data) {
       var response = {success: true, data: {}};
       response.data.messages = b.messages;
       if (clear) {bots[user].messages = []};
+      response.data.online = b.online
       //response.data.world = b.world.getColumns();
       //response.data.players = b.players;
       //response.data.player = b.player;
