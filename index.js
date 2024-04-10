@@ -11,6 +11,7 @@ fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if 
 var bots = {}; // There might be some scaling issues
 
 function actionDecider(action, user, data) {
+  let data = decodeURI(data)
   console.log({'action': action, 'user': user, 'data': data});
   var status = 200;
   var ctype = 'application/json';
@@ -90,3 +91,4 @@ function botHandler(req, res) {
 
 
 http.createServer(botHandler).listen(process.env.PORT || 3000);
+console.log(`Server started on port ${process.env.PORT || 3000}`)
