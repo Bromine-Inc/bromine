@@ -20,7 +20,7 @@ function getCoords(r, pos) {
       c += 1;
     }
   }
-  let [x, y, z] = [pos.x, pos.y, pos.z]
+  let [x, y, z] = [Math.floor(pos.x), Math.floor(pos.y), Math.floor(pos.z)]
   let [rx, ry, rz] = [rangeNum(r, x), rangeNum(r, y), rangeNum(r, z)]
   let l = []
   for (let a of rx) {
