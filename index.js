@@ -69,6 +69,7 @@ function actionDecider(action, user, data) {
       if (clear) {bots[user].messages = []};
       response.data.online = b.online;
       response.data.position = b.entity.position;
+      response.data.yaw_pitch = [b.entity.yaw, b.entity.pitch];
       let viewDistance = 2; // This is in blocks, not chunks. This will give a 5x5x5 cube of the world, centered around the player's position.
       response.data.blocks = bots[user].findBlocks({matching: () => true, maxDistance: viewDistance, count: (viewDistance*2-1)**3}).map(function(a,b,c){
         let t = {};
