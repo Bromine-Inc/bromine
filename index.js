@@ -17,7 +17,7 @@ function getCoords(r, pos) {
     while (true) {
       a.push(c);
       if (c === xyz + r) {return a;}
-      a += 1;
+      c += 1;
     }
   }
   let [x, y, z] = [pos.x, pos.y, pos.z]
