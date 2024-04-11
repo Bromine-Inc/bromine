@@ -10,29 +10,6 @@ fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if 
 
 var bots = {}; // There might be some scaling issues
 
-function getCoords(r, pos) {
-  function rangeNum(r, xyz) {
-    let a = [];
-    let c = xyz - r;
-    while (true) {
-      a.push(c);
-      if (c === xyz + r) {return a;}
-      c += 1;
-    }
-  }
-  let [x, y, z] = [Math.floor(pos.x), Math.floor(pos.y), Math.floor(pos.z)]
-  let [rx, ry, rz] = [rangeNum(r, x), rangeNum(r, y), rangeNum(r, z)]
-  let l = []
-  for (let a of rx) {
-    for (let b of ry) {
-      for (let c of rz) {
-        l.push([a,b,c])
-      }
-    }
-  }
-  return l;
-}
-
 function actionDecider(action, user, data) {
   data = decodeURIComponent(data)
   console.log({'action': action, 'user': user, 'data': data});
@@ -69,13 +46,13 @@ function actionDecider(action, user, data) {
       break;
     case "look":
       let [yaw, pitch] = data.split(",");
-      bots[user].look(yaw, pitch);
+      bots[user].look(yaw, pitch, true);
       var response = {success: true, data: {yaw: bots[user].entity.yaw, pitch: bots[user].entity.pitch}};
       break;
     case "quit":
-      [reason, kicked] = data.split(",")
-      kicked = JSON.parse(kicked)
-      if (kicked) {bots[user].end(reason)};
+      [reason, kick] = data.split(",")
+      kick = JSON.parse(kick)
+      if (kick) {bots[user].end(reason)};
       delete bots[user];
       var response = {success: true};
       break;
@@ -93,7 +70,7 @@ function actionDecider(action, user, data) {
       response.data.online = b.online;
       response.data.position = b.entity.position;
       let viewDistance = 2; // This is in blocks, not chunks. This will give a 5x5x5 cube of the world, centered around the player's position.
-      response.data.blocks = getCoords(viewDistance, b.entity.position).map(function(a,b,c){
+      response.data.blocks = bots[user].findBlocks({matching: () => true, maxDistance: viewDistance, count: (viewDistance*2-1)**3}).map(function(a,b,c){
         let t = {};
         t[a.toString()] = bots[user].blockAt(a);
         return t;
