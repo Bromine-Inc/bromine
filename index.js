@@ -93,7 +93,11 @@ function actionDecider(action, user, data) {
       response.data.online = b.online;
       response.data.position = b.entity.position;
       let viewDistance = 2; // This is in blocks, not chunks. This will give a 5x5x5 cube of the world, centered around the player's position.
-      response.data.blocks = getCoords(viewDistance, b.entity.position).map((a,b,c) => {a: bots[user].blockAt(a)});
+      response.data.blocks = getCoords(viewDistance, b.entity.position).map(function(a,b,c){
+        let t = {};
+        t[a.toString()] = bots[user].blockAt(a);
+        return t;
+      });
       //response.data.chunk = b.world.getColumn(b.entity.position.x >> 4, b.entity.position.z >> 4)
       //response.data.world = b.world.getColumns();
       //response.data.players = b.players;
