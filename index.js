@@ -10,10 +10,27 @@ fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if 
 
 var bots = {}; // There might be some scaling issues
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+function getCoords(r, pos) {
+  function rangeNum(r, xyz) {
+    let a = [];
+    let c = xyz - r;
+    while (true) {
+      a.push(c);
+      if (c === xyz + r) {return a;}
+      a += 1;
+    }
+  }
+  let [x, y, z] = [pos.x, pos.y, pos.z]
+  let [rx, ry, rz] = [rangeNum(r, x), rangeNum(r, y), rangeNum(r, z)]
+  let l = []
+  for (let a of rx) {
+    for (let b of ry) {
+      for (let c of rz) {
+        l.push([a,b,c])
+      }
+    }
+  }
+  return l;
 }
 
 function actionDecider(action, user, data) {
@@ -39,7 +56,7 @@ function actionDecider(action, user, data) {
       bot.id = id;
       bot.online = false;
       bot.on("message", function(msg, pos) {this.messages.push({jsonMsg: msg, position: pos})});
-      bot.on("kick", function() {this.online = false});
+      bot.on("kicked", function(res, log) {this.online = false; this.kickReason = res});
       bot.once("spawn", function(){this.online = true});
       bots[id] = bot;
       var response = {success: true, id: id};
@@ -65,7 +82,7 @@ function actionDecider(action, user, data) {
     case "chatsend":
       let message = data;
       bots[user].chat(message);
-      var response = {success: true, message: message}
+      var response = {success: true, message: message};
       break;
     case "getdata":
       let b = bots[user];
@@ -73,9 +90,11 @@ function actionDecider(action, user, data) {
       var response = {success: true, data: {}};
       response.data.messages = b.messages;
       if (clear) {bots[user].messages = []};
-      response.data.online = b.online
-      response.data.position = b.entity.position
-      response.data.chunk = b.world.getColumn(b.entity.position.x >> 4, b.entity.position.z >> 4)
+      response.data.online = b.online;
+      response.data.position = b.entity.position;
+      let viewDistance = 2; // This is in blocks, not chunks. This will give a 5x5x5 cube of the world, centered around the player's position.
+      response.data.blocks = getCoords(viewDistance, b.entity.position).map((a,b,c) => {a: bots[user].blockAt(a)});
+      //response.data.chunk = b.world.getColumn(b.entity.position.x >> 4, b.entity.position.z >> 4)
       //response.data.world = b.world.getColumns();
       //response.data.players = b.players;
       //response.data.player = b.player;
