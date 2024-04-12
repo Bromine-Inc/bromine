@@ -1,110 +1,131 @@
-var mineflayer = require("mineflayer"); // Put a decent chunk of the workload on a package made by someone else
-var http = require("http"); // We need a server to accept requests
-var fs = require("fs"); // We get the contents for index.html and favicon.ico
-var crypto = require("crypto");
+const mineflayer = require("mineflayer");
+const http = require("http");
+const fs = require("fs");
+const crypto = require("crypto");
 
-var html;
-var img;
-fs.readFile('./index.html', ((err, data) => {html = data.toString(); if (err) {throw err};}));
-fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if (err) {throw err};}));
+const index = fs.readFileSync("./index.html", "utf8");
+const favicon = fs.readFileSync("./favicon.ico", "binary");
 
-var bots = {}; // There might be some scaling issues
+const bots = {}; // There might be some scaling issues
 
 function actionDecider(action, user, data) {
-  data = decodeURIComponent(data)
-  console.log({'action': action, 'user': user, 'data': data});
-  var status = 200;
-  var ctype = 'application/json';
-  var response = {};
-  try {
-  switch (action) {     
+  console.log({ action, user, data });
+
+  switch (action) {
     case "wakeup":
-      var response = {success: true, message: "I'M SOOOOOOOOOOO TIRED"};
-      break;
-    case "favicon.ico":
-      var ctype = 'image/x-icon';
-      var response = img;
-      break;
+      return ["application/json", { message: "I'M SOOOOOOOOOOO TIRED" }];
     case "create":
-      let [username, ip, port] = data.split(","); // For now, we only support offline mode.
-      let id = crypto.randomBytes(32).toString('hex');
-      let bot = mineflayer.createBot({username: username || `Bromine_${id.slice(0, 8)}`, host: ip, port: (port || 25565)});
+      const [username, ip, port] = data.split(","); // For now, we only support offline mode.
+      const id = crypto.randomBytes(32).toString("hex");
+      const bot = mineflayer.createBot({
+        username: username || `Bromine_${id.slice(0, 8)}`,
+        host: ip,
+        port: port || 25565,
+      });
       bot.messages = [];
       bot.id = id;
       bot.online = false;
-      bot.on("message", function(msg, pos) {this.messages.push({jsonMsg: msg, position: pos})});
-      bot.on("kicked", function(res, log) {this.online = false; this.kickReason = res});
-      bot.once("spawn", function(){this.online = true});
+      bot.once("spawn", function () {
+        this.online = true;
+      });
+      bot.on("message", (jsonMsg, position) =>
+        this.messages.push({ jsonMsg, position }),
+      );
+      bot.on("kicked", function (res, log) {
+        this.online = false;
+        this.kickReason = res;
+      });
       bots[id] = bot;
-      var response = {success: true, id: id};
-      break;
+      return ["application/json", { id }];
     case "move":
-      let [packet, use] = data.split(",");
-      use = JSON.parse(use)
-      bots[user].setControlState(packet, use);
-      var response = {success: true, data: {position: bots[user].entity.position} };
-      break;
+      const [packet, use] = data.split(",");
+      bots[user].setControlState(packet, JSON.parse(use));
+      return [
+        "application/json",
+        { data: { position: bots[user].entity.position } },
+      ];
     case "look":
-      let [yaw, pitch] = data.split(",");
+      const [yaw, pitch] = data.split(",");
       bots[user].look(yaw, pitch, true);
-      var response = {success: true, data: {yaw: bots[user].entity.yaw, pitch: bots[user].entity.pitch}};
-      break;
+      return [
+        "application/json",
+        {
+          data: { yaw: bots[user].entity.yaw, pitch: bots[user].entity.pitch },
+        },
+      ];
     case "quit":
-      [reason, kick] = data.split(",")
-      kick = JSON.parse(kick)
-      if (kick) {bots[user].end(reason)};
+      const [reason, kick] = data.split(",");
+      kick = JSON.parse(kick);
+      if (kick) bots[user].end(reason);
       delete bots[user];
-      var response = {success: true};
-      break;
+      return ["application/json", {}];
     case "chatsend":
       let message = data;
       bots[user].chat(message);
-      var response = {success: true, message: message};
-      break;
+      return ["application/json", { message }];
     case "getdata":
-      let b = bots[user];
-      let clear = JSON.parse(data);
-      var response = {success: true, data: {}};
-      response.data.messages = b.messages;
-      if (clear) {bots[user].messages = []};
-      response.data.online = b.online;
-      response.data.position = b.entity.position;
-      response.data.yaw_pitch = [b.entity.yaw, b.entity.pitch];
+      const bot = bots[user];
+      const clear = JSON.parse(data);
+      const messages = bot.messages;
+      if (clear) bot.messages = [];
       let viewDistance = 2; // This is in blocks, not chunks. This will give a 5x5x5 cube of the world, centered around the player's position.
-      response.data.blocks = Object.assign(...bots[user].findBlocks({matching: () => true, maxDistance: viewDistance, count: (viewDistance*2+1)**3}).map(function(a,b,c){
-        let t = {};
-        t[a.toString()] = bots[user].blockAt(a);
-        return t;
-      }));
-      //response.data.chunk = b.world.getColumn(b.entity.position.x >> 4, b.entity.position.z >> 4)
-      //response.data.world = b.world.getColumns();
-      //response.data.players = b.players;
-      //response.data.player = b.player;
-      //response.data.entities = b.entities;
-      break; 
+      return [
+        "application/json",
+        {
+          data: {
+            messages,
+            online: bot.online,
+            position: bot.entity.position,
+            yaw_pitch: [bot.entity.yaw, bot.entity.pitch],
+            blocks: Object.assign(
+              ...bots[user]
+                .findBlocks({
+                  matching: () => true,
+                  maxDistance: viewDistance,
+                  count: (viewDistance * 2 + 1) ** 3,
+                })
+                .map((a, b, c) => {
+                  return { [a.toString()]: bot.blockAt(a) };
+                }),
+            ),
+            // chunk: bot.world.getColumn(bot.entity.position.x >> 4, bot.entity.position.z >> 4),
+            // world: bot.world.getColumns(),
+            // players: bot.players,
+            // player: bot.player,
+            // entities: bot.entities;
+          },
+        },
+      ];
+    case "favicon.ico":
+      return ["image/x-icon", favicon];
     default:
-      var response = html;
-      var ctype = 'text/html';
-      break;
-  } 
-  } catch(err) {
-    var response = {success: false};
-    var status = 400;
-    console.error(err);
+      return ["text/html", index];
   }
-  return [status, response, ctype];
 }
 
 function botHandler(req, res) {
-  var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
-  var [s, r, c] = actionDecider(action, user, data);
-  var t = (c === 'application/json' ? JSON.stringify(r) : r);
-  res.writeHead(s, {'Content-Type': c});
-  res.write(t);
+  const [action, user, data] = req.url.slice(1).split("/", 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA]
+  try {
+    const [contentType, value] = actionDecider(
+      action,
+      user,
+      decodeURIComponent(data),
+    );
+    res.writeHead(200, { "Content-Type": c });
+    if (contentType === "application/json") {
+      response.success = true;
+      res.write(JSON.stringify(value));
+    } else {
+      res.write(value);
+    }
+  } catch (e) {
+    console.error(e);
+    res.writeHead(400, { "Content-Type": "application/json" });
+    res.write("{ success: false }");
+  }
   res.end();
   // another half a miracle happens
 }
 
-
 http.createServer(botHandler).listen(process.env.PORT || 3000);
-console.log(`Server started on port ${process.env.PORT || 3000}`)
+console.log(`Server started on port ${process.env.PORT || 3000}`);
