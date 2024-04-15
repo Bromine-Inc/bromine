@@ -88,6 +88,7 @@ function actionDecider(action, user, data) {
         let [ac, dat] = piece.split("|")
         return actionDecider(ac, user, dat.replace(";", ","))[1]
       })}
+      break;
     default:
       var response = html;
       var ctype = 'text/html';
