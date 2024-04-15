@@ -81,7 +81,13 @@ function actionDecider(action, user, data) {
       //response.data.players = b.players;
       //response.data.player = b.player;
       //response.data.entities = b.entities;
-      break; 
+      break;
+    case "compound":
+      let actions = data.split(",")
+      var response = {success: true, data: actions.map(function(piece) {
+        let [ac, dat] = piece.split("|")
+        return actionDecider(ac, user, dat.replace(";", ","))[1]
+      })}
     default:
       var response = html;
       var ctype = 'text/html';
