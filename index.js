@@ -20,6 +20,10 @@ async function actionDecider(action, user, data) { // Oh god please no not async
   var status = 200;
   var ctype = 'application/json';
   var response = {};
+  if (!/^[0-9a-f]{64}$/.test(user)) {
+    var status = 400;
+    var response = {success: false}
+  } else {
   try {
   switch (action) {     
     case "wakeup":
@@ -105,6 +109,7 @@ async function actionDecider(action, user, data) { // Oh god please no not async
     var response = {success: false};
     var status = 400;
     console.error(err);
+  }
   }
   return [status, response, ctype];
 }
