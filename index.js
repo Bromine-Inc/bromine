@@ -40,8 +40,8 @@ async function actionDecider(action, user, data) {
       bot.on("kicked", function(res, log) {this.online = false; this.kickReason = res});
       bot.once("spawn", function(){this.online = true});
       bots[id] = bot;
-      while bot.online !== true do {
-        await sleep(500)
+      while (bots[id].online !== true) {
+        let monkey = await sleep(500)
       }
       var response = {success: true, id: id};
       break;
