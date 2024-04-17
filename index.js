@@ -42,14 +42,16 @@ async function actionDecider (action, user, data) {
   } else {
     try {
       switch (action) {
-        case 'wakeup':{
+        case 'wakeup': {
           var response = { success: true, message: "I'M SOOOOOOOOOOO TIRED" }
-          break}
-        case 'favicon.ico':{
+          break
+        }
+        case 'favicon.ico': {
           var ctype = 'image/x-icon'
           var response = img
-          break}
-        case 'create':{
+          break
+        }
+        case 'create': {
           const [username, ip, port] = data.split(',') // For now, we only support offline mode.
           const id = crypto.randomBytes(32).toString('hex')
           const bot = mineflayer.createBot({
@@ -75,8 +77,9 @@ async function actionDecider (action, user, data) {
             monkey = await sleep(50)
           }
           var response = { success: true, id }
-          break}
-        case 'move':{
+          break
+        }
+        case 'move': {
           let [packet, use] = data.split(',')
           use = JSON.parse(use)
           bots[user].setControlState(packet, use)
@@ -84,8 +87,9 @@ async function actionDecider (action, user, data) {
             success: true,
             data: { position: bots[user].entity.position }
           }
-          break}
-        case 'look':{
+          break
+        }
+        case 'look': {
           const [yaw, pitch] = data.split(',')
           bots[user].look(yaw, pitch, true)
           var response = {
@@ -95,8 +99,9 @@ async function actionDecider (action, user, data) {
               pitch: bots[user].entity.pitch
             }
           }
-          break}
-        case 'quit':{
+          break
+        }
+        case 'quit': {
           [reason, kick] = data.split(',')
           kick = JSON.parse(kick)
           if (kick) {
@@ -104,13 +109,15 @@ async function actionDecider (action, user, data) {
           }
           delete bots[user]
           var response = { success: true }
-          break}
-        case 'chatsend':{
+          break
+        }
+        case 'chatsend': {
           const message = data
           bots[user].chat(message)
           var response = { success: true, message }
-          break}
-        case 'getdata':{
+          break
+        }
+        case 'getdata': {
           const b = bots[user]
           const clear = JSON.parse(data)
           var response = { success: true, data: {} }
@@ -140,8 +147,9 @@ async function actionDecider (action, user, data) {
           // response.data.players = b.players;
           // response.data.player = b.player;
           // response.data.entities = b.entities;
-          break}
-        case 'compound':{
+          break
+        }
+        case 'compound': {
           const actions = data.split(',')
           var response = {
             success: true,
@@ -150,11 +158,13 @@ async function actionDecider (action, user, data) {
               return actionDecider(ac, user, dat.replace(';', ','))[1]
             })
           }
-          break}
-        default:{
+          break
+        }
+        default: {
           var response = html
           var ctype = 'text/html'
-          break}
+          break
+        }
       }
     } catch (err) {
       var response = { success: false }
