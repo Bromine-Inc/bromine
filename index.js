@@ -3,7 +3,7 @@ var http = require("http"); // We need a server to accept requests
 var fs = require("fs"); // We get the contents for index.html and favicon.ico
 var crypto = require("crypto");
 
-function sleep(ms) {
+async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
