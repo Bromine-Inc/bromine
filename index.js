@@ -14,7 +14,7 @@ fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if 
 
 var bots = {}; // There might be some scaling issues
 
-async function actionDecider(action, user, data) {
+async function actionDecider(action, user, data) { // Oh god please no not async!
   data = decodeURIComponent(data)
   console.log({'action': action, 'user': user, 'data': data});
   var status = 200;
@@ -41,7 +41,7 @@ async function actionDecider(action, user, data) {
       bot.once("spawn", function(){this.online = true});
       bots[id] = bot;
       while (bots[id].online !== true) {
-        let monkey = await sleep(500)
+        let monkey = await sleep(50)
       }
       var response = {success: true, id: id};
       break;
@@ -110,8 +110,9 @@ async function actionDecider(action, user, data) {
 }
 
 function botHandler(req, res) {
-  var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
-  var [s, r, c] = actionDecider(action, user, data).then((a) => {return a;});
+  var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA]
+  var [s, r, c]
+  actionDecider(action, user, data).then((a) => {[s, r, c] = a});
   var t = (c === 'application/json' ? JSON.stringify(r) : r);
   res.writeHead(s, {'Content-Type': c});
   res.write(t);
