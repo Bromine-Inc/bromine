@@ -163,9 +163,7 @@ async function actionDecider (action, user, data) {
 function botHandler (req, res) {
   const [action, user, data] = req.url.slice(1).split('/', 3) // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA]
   actionDecider(action, user, data).then((a) => {
-    let s
-    let r
-    const c = a
+    const [s, r, c] = a
     const t = c === 'application/json' ? JSON.stringify(r) : r
     res.writeHead(s, { 'Content-Type': c })
     res.write(t)
