@@ -33,8 +33,8 @@ async function actionDecider(action, user, data) {
   let response = {};
   let monkey;
   if (!/^[0-9a-f]{64}$/.test(user)) {
-    var status = 400;
-    var response = { success: false };
+    status = 400;
+    response = { success: false };
   } else {
     try {
       switch (action) {
