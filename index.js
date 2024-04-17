@@ -1,7 +1,7 @@
 const mineflayer = require('mineflayer') // Put a decent chunk of the workload on a package made by someone else
 const http = require('http') // We need a server to accept requests
 const fs = require('fs') // We get the contents for index.html and favicon.ico
-const crypto = require('crypto')
+const crypto = require('crypto') // Cryptography time
 
 async function sleep (ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -28,9 +28,10 @@ async function actionDecider (action, user, data) {
   // Oh god please no not async!
   data = decodeURIComponent(data)
   console.log({ action, user, data })
-  var status = 200
-  var ctype = 'application/json'
-  var response = {}
+  let status = 200
+  let ctype = 'application/json'
+  let response = {}
+  let monkey
   if (!/^[0-9a-f]{64}$/.test(user)) {
     var status = 400
     var response = { success: false }
@@ -38,11 +39,11 @@ async function actionDecider (action, user, data) {
     try {
       switch (action) {
         case 'wakeup':
-          var response = { success: true, message: "I'M SOOOOOOOOOOO TIRED" }
+          response = { success: true, message: "I'M SOOOOOOOOOOO TIRED" }
           break
         case 'favicon.ico':
-          var ctype = 'image/x-icon'
-          var response = img
+          ctype = 'image/x-icon'
+          response = img
           break
         case 'create':
           const [username, ip, port] = data.split(',') // For now, we only support offline mode.
@@ -67,15 +68,15 @@ async function actionDecider (action, user, data) {
           })
           bots[id] = bot
           while (bots[id].online !== true) {
-            const monkey = await sleep(50)
+            monkey = await sleep(50)
           }
-          var response = { success: true, id }
+          response = { success: true, id }
           break
         case 'move':
-          let [packet, use] = data.split(',')
-          use = JSON.parse(use)
-          bots[user].setControlState(packet, use)
-          var response = {
+          const [packet, use] = data.split(',')
+          const tuse = JSON.parse(use)
+          bots[user].setControlState(packet, tuse)
+          response = {
             success: true,
             data: { position: bots[user].entity.position }
           }
@@ -83,7 +84,7 @@ async function actionDecider (action, user, data) {
         case 'look':
           const [yaw, pitch] = data.split(',')
           bots[user].look(yaw, pitch, true)
-          var response = {
+          response = {
             success: true,
             data: {
               yaw: bots[user].entity.yaw,
@@ -98,17 +99,17 @@ async function actionDecider (action, user, data) {
             bots[user].end(reason)
           }
           delete bots[user]
-          var response = { success: true }
+          response = { success: true }
           break
         case 'chatsend':
           const message = data
           bots[user].chat(message)
-          var response = { success: true, message }
+          response = { success: true, message }
           break
         case 'getdata':
           const b = bots[user]
           const clear = JSON.parse(data)
-          var response = { success: true, data: {} }
+          response = { success: true, data: {} }
           response.data.messages = b.messages
           if (clear) {
             bots[user].messages = []
@@ -130,15 +131,10 @@ async function actionDecider (action, user, data) {
                 return t
               })
           )
-          // response.data.chunk = b.world.getColumn(b.entity.position.x >> 4, b.entity.position.z >> 4)
-          // response.data.world = b.world.getColumns();
-          // response.data.players = b.players;
-          // response.data.player = b.player;
-          // response.data.entities = b.entities;
           break
         case 'compound':
           const actions = data.split(',')
-          var response = {
+          response = {
             success: true,
             data: actions.map(function (piece) {
               const [ac, dat] = piece.split('|')
@@ -147,13 +143,13 @@ async function actionDecider (action, user, data) {
           }
           break
         default:
-          var response = html
-          var ctype = 'text/html'
+          response = html
+          ctype = 'text/html'
           break
       }
     } catch (err) {
-      var response = { success: false }
-      var status = 400
+      response = { success: false }
+      status = 400
       console.error(err)
     }
   }
@@ -164,9 +160,9 @@ function botHandler (req, res) {
   const [action, user, data] = req.url.slice(1).split('/', 3) // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA]
   actionDecider(action, user, data).then((a) => {
     const [s, r, c] = a
-    const t = c === 'application/json' ? JSON.stringify(r) : r
+    const truer = c === 'application/json' ? JSON.stringify(r) : r
     res.writeHead(s, { 'Content-Type': c })
-    res.write(t)
+    res.write(truer)
     res.end()
   })
 }
