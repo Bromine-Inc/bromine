@@ -3,6 +3,10 @@ var http = require("http"); // We need a server to accept requests
 var fs = require("fs"); // We get the contents for index.html and favicon.ico
 var crypto = require("crypto");
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 var html;
 var img;
 fs.readFile('./index.html', ((err, data) => {html = data.toString(); if (err) {throw err};}));
@@ -10,7 +14,7 @@ fs.readFile('./favicon.ico', ((err, data) => {img = data.toString("binary"); if 
 
 var bots = {}; // There might be some scaling issues
 
-function actionDecider(action, user, data) {
+async function actionDecider(action, user, data) {
   data = decodeURIComponent(data)
   console.log({'action': action, 'user': user, 'data': data});
   var status = 200;
@@ -36,6 +40,9 @@ function actionDecider(action, user, data) {
       bot.on("kicked", function(res, log) {this.online = false; this.kickReason = res});
       bot.once("spawn", function(){this.online = true});
       bots[id] = bot;
+      while bot.online !== true do {
+        await sleep(500)
+      }
       var response = {success: true, id: id};
       break;
     case "move":
@@ -104,7 +111,7 @@ function actionDecider(action, user, data) {
 
 function botHandler(req, res) {
   var [action, user, data] = req.url.slice(1).split('/', 3); // To do [ACTION] with a bot with id [ID] with data [DATA] send a request to https://bromine-mw3o.onrender.com/[ACTION]/[USER]/[DATA] 
-  var [s, r, c] = actionDecider(action, user, data);
+  var [s, r, c] = actionDecider(action, user, data).then((a) => {return a;});
   var t = (c === 'application/json' ? JSON.stringify(r) : r);
   res.writeHead(s, {'Content-Type': c});
   res.write(t);
