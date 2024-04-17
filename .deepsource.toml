@@ -1,0 +1,15 @@
+version = 1
+
+exclude_patterns = ["**/!(index.js)"]
+
+[[analyzers]]
+name = "javascript"
+
+  [analyzers.meta]
+  environment = ["nodejs"]
+
+[[transformers]]
+name = "prettier"
+
+[[transformers]]
+name = "standardjs"
