@@ -32,7 +32,7 @@ async function actionDecider(action, user, data) {
   let ctype = "application/json";
   let response = {};
   let monkey;
-  if (!/^[0-9a-f]{64}$/.test(user)) {
+  if (!/^[0-9a-f]{64}$|na/.test(user)) {
     status = 400;
     response = { success: false };
   } else {
